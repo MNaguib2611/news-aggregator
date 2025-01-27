@@ -6,7 +6,7 @@ use App\Models\Article;
 
 class ArticleService
 {
-    public function getFilteredArticles(array $filters)
+    public function getFilteredArticles(array $filters, $perPage = 10)
     {
         $query = Article::query();
 
@@ -29,7 +29,7 @@ class ArticleService
             });
         }
 
-        return $query->get();
+        return $query->orderBy('published_at', 'desc')->paginate($perPage);
     }
 
     public function getFilterValues()

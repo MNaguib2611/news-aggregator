@@ -71,12 +71,30 @@ class ArticleController extends Controller
      *         required=false,
      *         @OA\Schema(type="string")
      *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Page number",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         description="Number of items per page",
+     *         required=false,
+     *         @OA\Schema(type="integer")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="List of articles",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Article")
+     *             type="object",
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Article")),
+     *             @OA\Property(property="current_page", type="integer"),
+     *             @OA\Property(property="last_page", type="integer"),
+     *             @OA\Property(property="per_page", type="integer"),
+     *             @OA\Property(property="total", type="integer")
      *         )
      *     ),
      *     @OA\Response(
@@ -88,14 +106,15 @@ class ArticleController extends Controller
     public function index(Request $request)
     {
         $filters = $request->only(['category', 'author', 'source', 'search']);
-        $articles = $this->articleService->getFilteredArticles($filters);
+        $perPage = $request->get('perPage', 10);
+        $articles = $this->articleService->getFilteredArticles($filters, $perPage);
 
         return response()->json($articles);
     }
 
     /**
      * @OA\Get(
-     *     path="api/articles/filters",
+     *     path="/api/articles/filters",
      *     summary="Get filter values",
      *     tags={"Articles"},
      *     @OA\Response(
