@@ -86,6 +86,24 @@ The application includes a command to fetch news articles from configured provid
 docker-compose exec app php artisan fetch:news
 ```
 
+## Setting Up a Cron Job
+
+To automatically fetch news articles every hour, you can set up a cron job. Follow these steps:
+
+1. Open your crontab file:
+    ```bash
+    crontab -e
+    ```
+
+2. Add the following line to schedule the command to run every hour:
+    ```bash
+    0 * * * * cd /path/to/your/news-aggregator && docker-compose exec app php artisan fetch:news
+    ```
+
+3. Save and exit the crontab editor.
+
+This will ensure that the news articles are fetched every hour automatically.
+
 ## License
 
 This project is licensed under the MIT License.
